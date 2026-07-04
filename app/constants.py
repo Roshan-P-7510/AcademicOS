@@ -1,7 +1,6 @@
 APP_NAME = "AcademicOS"
-APP_VERSION = "0.1.0-alpha"
+APP_VERSION = "Alpha 1"
 
 ORGANIZATION = "AcademicOS"
 
-WINDOW_WIDTH = 1600
-WINDOW_HEIGHT = 900
+DEFAULT_THEME = "dark.qss"
