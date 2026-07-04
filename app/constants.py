@@ -1,0 +1,7 @@
+APP_NAME = "AcademicOS"
+APP_VERSION = "0.1.0-alpha"
+
+ORGANIZATION = "AcademicOS"
+
+WINDOW_WIDTH = 1600
+WINDOW_HEIGHT = 900

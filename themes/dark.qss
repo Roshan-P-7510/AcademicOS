@@ -1,0 +1,332 @@
+/* ===========================
+   AcademicOS Dark Theme
+   Version 1.0
+=========================== */
+
+* {
+    font-family: "Segoe UI";
+    font-size: 10pt;
+}
+
+/* ---------------- Main Window ---------------- */
+
+QMainWindow {
+    background: #1E1E1E;
+}
+
+/* ---------------- Menu ---------------- */
+
+QMenuBar {
+    background: #252526;
+    color: white;
+}
+
+QMenuBar::item {
+    padding: 8px 14px;
+    background: transparent;
+}
+
+QMenuBar::item:selected {
+    background: #007ACC;
+}
+
+QMenu {
+    background: #2D2D30;
+    color: white;
+    border: 1px solid #3E3E42;
+}
+
+QMenu::item:selected {
+    background: #007ACC;
+}
+
+/* ---------------- Toolbar ---------------- */
+
+QToolBar {
+    background: #2D2D30;
+    spacing: 6px;
+    padding: 5px;
+    border: none;
+}
+
+QToolButton {
+    background: transparent;
+    color: white;
+    padding: 6px 10px;
+    border-radius: 5px;
+}
+
+QToolButton:hover {
+    background: #3E3E42;
+}
+
+QToolButton:pressed {
+    background: #007ACC;
+}
+
+/* ---------------- Status Bar ---------------- */
+
+QStatusBar {
+    background: #252526;
+    color: white;
+}
+
+/* ---------------- Dock Widgets ---------------- */
+
+QDockWidget {
+    color: white;
+}
+
+QDockWidget::title {
+    background: #2D2D30;
+    padding: 6px;
+}
+
+/* ---------------- List Widgets ---------------- */
+
+QListWidget {
+    background: #252526;
+    color: white;
+    border: none;
+    outline: none;
+}
+
+QListWidget::item {
+    padding: 10px;
+}
+
+QListWidget::item:selected {
+    background: #007ACC;
+    border-radius: 5px;
+}
+
+QListWidget::item:hover {
+    background: #3A3D41;
+}
+
+/* ---------------- Text Edit ---------------- */
+
+QTextEdit {
+    background: #1E1E1E;
+    color: white;
+    border: none;
+}
+
+/* ---------------- Labels ---------------- */
+
+QLabel {
+    color: white;
+}
+
+/* ---------------- Scroll Bars ---------------- */
+
+QScrollBar:vertical {
+    background: #252526;
+    width: 12px;
+}
+
+QScrollBar::handle:vertical {
+    background: #555;
+    min-height: 25px;
+}
+
+QScrollBar::handle:vertical:hover {
+    background: #777;
+}
+
+/* ---------------- Dashboard ---------------- */
+
+#Title{
+
+    font-size:34px;
+
+    font-weight:bold;
+
+    color:white;
+}
+
+#Subtitle{
+
+    color:#AAAAAA;
+
+    font-size:15px;
+}
+
+#SectionTitle{
+
+    font-size:18px;
+
+    font-weight:bold;
+
+    color:white;
+}
+
+QPushButton{
+
+    background:#007ACC;
+
+    color:white;
+
+    border:none;
+
+    border-radius:8px;
+
+    padding:10px 18px;
+
+    min-width:170px;
+}
+
+QPushButton:hover{
+
+    background:#0094FF;
+}
+
+QPushButton:pressed{
+
+    background:#0063A6;
+}
+
+QFrame{
+
+    background:#3A3D41;
+
+    max-height:1px;
+}
+/* ==========================
+   Action Card
+========================== */
+
+#ActionCard {
+
+    background:#23262D;
+
+    border:1px solid #343A46;
+
+    border-radius:18px;
+
+    min-height:220px;
+
+}
+
+#ActionCard:hover{
+
+    background:#2B3038;
+
+    border:2px solid #4F8CFF;
+
+}
+
+#ActionCardIcon{
+
+    font-size:48px;
+
+}
+
+#ActionCardTitle{
+
+    font-size:20px;
+
+    font-weight:700;
+
+    color:white;
+
+}
+
+#ActionCardDescription{
+
+    color:#B8C0CC;
+
+    font-size:11pt;
+
+}
+/* =======================================================
+DASHBOARD
+======================================================= */
+
+#DashboardTitle{
+
+    font-size:34px;
+
+    font-weight:700;
+
+    color:white;
+
+}
+
+#DashboardSubtitle{
+
+    font-size:13pt;
+
+    color:#B6BDC7;
+
+}
+
+#SearchBar{
+
+    min-height:42px;
+
+    border-radius:10px;
+
+    padding-left:15px;
+
+    background:#252932;
+
+    border:1px solid #3A404B;
+
+    font-size:11pt;
+
+}
+
+#SectionTitle{
+
+    font-size:18pt;
+
+    font-weight:bold;
+
+    color:white;
+
+}
+
+#StatCard{
+
+    background:#252932;
+
+    border:1px solid #363C47;
+
+    border-radius:15px;
+
+}
+
+#StatCard:hover{
+
+    border:1px solid #4F8CFF;
+
+}
+
+#StatNumber{
+
+    font-size:30px;
+
+    font-weight:bold;
+
+    color:white;
+
+}
+
+#StatLabel{
+
+    color:#B6BDC7;
+
+}
+
+#Panel{
+
+    background:#252932;
+
+    border:1px solid #363C47;
+
+    border-radius:15px;
+
+    padding:15px;
+
+}
