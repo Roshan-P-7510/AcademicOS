@@ -11,28 +11,27 @@ class WorkspaceController:
 
     def create_workspace(self):
 
-        dialog = CreateWorkspaceDialog()
+        dialog = CreateWorkspaceDialog(self.parent)
 
         if dialog.exec():
 
-            name = dialog.workspace_name()
-            location = dialog.workspace_location()
+            try:
 
-            if not name or not location:
-                QMessageBox.warning(
-                    self.parent,
-                    "Missing Information",
-                    "Please enter both a workspace name and location."
+                workspace = WorkspaceService.create_workspace(
+                    dialog.workspace_name(),
+                    dialog.workspace_location()
                 )
-                return
 
-            path = WorkspaceService.create_workspace(
-                name,
-                location
-            )
+                QMessageBox.information(
+                    self.parent,
+                    "Success",
+                    f"Workspace created!\n\n{workspace}"
+                )
 
-            QMessageBox.information(
-                self.parent,
-                "Success",
-                f"Workspace created:\n\n{path}"
-            )
+            except Exception as e:
+
+                QMessageBox.critical(
+                    self.parent,
+                    "Error",
+                    str(e)
+                )

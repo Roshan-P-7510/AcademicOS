@@ -3,7 +3,7 @@ from PySide6.QtWidgets import (
     QDockWidget,
     QMainWindow,
 )
-
+from controllers.workspace_controller import WorkspaceController
 from ui.menu_bar import MainMenuBar
 from ui.tool_bar import MainToolBar
 from ui.workspace import Workspace
@@ -39,6 +39,8 @@ class MainWindow(QMainWindow):
         # ---------- Workspace ----------
 
         self.workspace = Workspace()
+
+        self.workspace_controller = WorkspaceController(self)
 
         self.setCentralWidget(self.workspace)
 
@@ -84,4 +86,10 @@ class MainWindow(QMainWindow):
 
         self.menu.exit_action.triggered.connect(
             self.close
+        )
+
+        dashboard = self.workspace.dashboard
+
+        dashboard.create.clicked.connect(
+            self.workspace_controller.create_workspace
         )

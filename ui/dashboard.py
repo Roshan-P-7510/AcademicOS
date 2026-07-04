@@ -84,18 +84,18 @@ class Dashboard(QWidget):
 
         actions = QHBoxLayout()
 
-        create = ActionCard(
+        self.create = ActionCard(
             "Create Workspace",
             "Create a brand new workspace."
         )
 
-        open_ws = ActionCard(
+        self.open_workspace = ActionCard(
             "Open Workspace",
             "Continue where you left off."
         )
 
-        actions.addWidget(create)
-        actions.addWidget(open_ws)
+        actions.addWidget(self.create)
+        actions.addWidget(self.open_workspace)
 
         root.addLayout(actions)
 
