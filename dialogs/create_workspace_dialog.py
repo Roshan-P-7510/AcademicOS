@@ -1,22 +1,15 @@
-from pathlib import Path
-
 from PySide6.QtWidgets import (
     QDialog,
-    QVBoxLayout,
     QLabel,
     QLineEdit,
     QPushButton,
     QFileDialog,
     QHBoxLayout,
-    QDialogButtonBox,
-    QMessageBox,
+    QVBoxLayout,
 )
 
 
 class CreateWorkspaceDialog(QDialog):
-    """
-    Dialog used to create a new AcademicOS workspace.
-    """
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -24,128 +17,54 @@ class CreateWorkspaceDialog(QDialog):
         self.setWindowTitle("Create Workspace")
         self.setMinimumWidth(500)
 
-        self._build_ui()
-
-    def _build_ui(self):
-
         layout = QVBoxLayout(self)
-
-        # ---------------- Workspace Name ----------------
 
         layout.addWidget(QLabel("Workspace Name"))
 
         self.name_edit = QLineEdit()
-        self.name_edit.setPlaceholderText(
-            "Example: Class 12 Science"
-        )
-
         layout.addWidget(self.name_edit)
-
-        # ---------------- Location ----------------
 
         layout.addWidget(QLabel("Location"))
 
-        location_layout = QHBoxLayout()
+        row = QHBoxLayout()
 
         self.location_edit = QLineEdit()
-        self.location_edit.setPlaceholderText(
-            "Choose where the workspace will be created..."
-        )
+        self.location_edit.setReadOnly(True)
 
-        browse_button = QPushButton("Browse...")
+        browse_btn = QPushButton("Browse")
 
-        browse_button.clicked.connect(
-            self.choose_location
-        )
+        row.addWidget(self.location_edit)
+        row.addWidget(browse_btn)
 
-        location_layout.addWidget(self.location_edit)
-        location_layout.addWidget(browse_button)
+        layout.addLayout(row)
 
-        layout.addLayout(location_layout)
+        buttons = QHBoxLayout()
 
-        # ---------------- Buttons ----------------
+        self.create_btn = QPushButton("Create")
+        self.cancel_btn = QPushButton("Cancel")
 
-        self.button_box = QDialogButtonBox(
-            QDialogButtonBox.Ok |
-            QDialogButtonBox.Cancel
-        )
+        buttons.addStretch()
+        buttons.addWidget(self.cancel_btn)
+        buttons.addWidget(self.create_btn)
 
-        self.button_box.button(
-            QDialogButtonBox.Ok
-        ).setText("Create")
+        layout.addLayout(buttons)
 
-        self.button_box.accepted.connect(
-            self.validate
-        )
+        browse_btn.clicked.connect(self.choose_folder)
+        self.cancel_btn.clicked.connect(self.reject)
+        self.create_btn.clicked.connect(self.accept)
 
-        self.button_box.rejected.connect(
-            self.reject
-        )
-
-        layout.addWidget(self.button_box)
-
-    # -------------------------------------------------
-
-    def choose_location(self):
+    def choose_folder(self):
 
         folder = QFileDialog.getExistingDirectory(
             self,
-            "Select Workspace Location"
+            "Choose Workspace Location"
         )
 
         if folder:
             self.location_edit.setText(folder)
 
-    # -------------------------------------------------
-
-    def validate(self):
-
-        name = self.workspace_name()
-
-        location = self.workspace_location()
-
-        if not name:
-
-            QMessageBox.warning(
-                self,
-                "Invalid Name",
-                "Please enter a workspace name."
-            )
-
-            return
-
-        if not location:
-
-            QMessageBox.warning(
-                self,
-                "Invalid Location",
-                "Please choose a workspace location."
-            )
-
-            return
-
-        workspace_path = Path(location) / name
-
-        if workspace_path.exists():
-
-            QMessageBox.warning(
-                self,
-                "Workspace Exists",
-                "A workspace with this name already exists."
-            )
-
-            return
-
-        self.accept()
-
-    # -------------------------------------------------
-
-    def workspace_name(self) -> str:
-
+    def workspace_name(self):
         return self.name_edit.text().strip()
 
-    # -------------------------------------------------
-
-    def workspace_location(self) -> str:
-
+    def workspace_location(self):
         return self.location_edit.text().strip()
