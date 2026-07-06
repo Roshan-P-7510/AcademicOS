@@ -1,8 +1,9 @@
-from PySide6.QtWidgets import QMessageBox, QFileDialog
-from services.recent_service import RecentService
-from dialogs.create_workspace_dialog import CreateWorkspaceDialog
-from services.workspace_service import WorkspaceService
+from PySide6.QtWidgets import QFileDialog, QMessageBox
+
 from core.session import Session
+from dialogs.create_workspace_dialog import CreateWorkspaceDialog
+from services.recent_service import RecentService
+from services.workspace_service import WorkspaceService
 
 
 class WorkspaceController:
@@ -10,35 +11,41 @@ class WorkspaceController:
     def __init__(self, parent):
         self.parent = parent
 
-    # ---------------- CREATE WORKSPACE ----------------
+    # --------------------------------------------------
+    # CREATE WORKSPACE
+    # --------------------------------------------------
 
     def create_workspace(self):
 
         dialog = CreateWorkspaceDialog(self.parent)
 
-        if dialog.exec():
+        if not dialog.exec():
+            return
 
-            try:
-                workspace = WorkspaceService.create_workspace(
-                    dialog.workspace_name(),
-                    dialog.workspace_location()
-                )
+        try:
 
-                QMessageBox.information(
-                    self.parent,
-                    "Success",
-                    f"Workspace created!\n\n{workspace}"
-                )
+            workspace = WorkspaceService.create_workspace(
+                dialog.workspace_name(),
+                dialog.workspace_location()
+            )
 
-            except Exception as e:
+            QMessageBox.information(
+                self.parent,
+                "Success",
+                f"Workspace created!\n\n{workspace}"
+            )
 
-                QMessageBox.critical(
-                    self.parent,
-                    "Error",
-                    str(e)
-                )
+        except Exception as e:
 
-    # ---------------- OPEN WORKSPACE ----------------
+            QMessageBox.critical(
+                self.parent,
+                "Error",
+                str(e)
+            )
+
+    # --------------------------------------------------
+    # OPEN WORKSPACE
+    # --------------------------------------------------
 
     def open_workspace(self):
 
@@ -50,14 +57,22 @@ class WorkspaceController:
         if not folder:
             return
 
+        self._open(folder)
+
+    # --------------------------------------------------
+    # INTERNAL
+    # --------------------------------------------------
+
+    def _open(self, folder: str):
+
         try:
+
             path, data = WorkspaceService.open_workspace(folder)
 
-            # update session
             Session.open_workspace(path, data)
+
             RecentService.add(path)
 
-            # update UI
             self.parent.setWindowTitle(
                 f"AcademicOS — {Session.workspace_name}"
             )
@@ -72,11 +87,18 @@ class WorkspaceController:
                 "Workspace opened successfully."
             )
 
-        except FileNotFoundError as e:
-            QMessageBox.warning(self.parent, "Error", str(e))
+        except (FileNotFoundError, ValueError) as e:
 
-        except ValueError as e:
-            QMessageBox.warning(self.parent, "Error", str(e))
+            QMessageBox.warning(
+                self.parent,
+                "Workspace",
+                str(e)
+            )
 
         except Exception as e:
-            QMessageBox.critical(self.parent, "Error", str(e))
+
+            QMessageBox.critical(
+                self.parent,
+                "Error",
+                str(e)
+            )
