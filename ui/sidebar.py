@@ -1,54 +1,84 @@
-from PySide6.QtWidgets import (
-    QWidget,
-    QVBoxLayout,
-    QTreeView,
-    QFileSystemModel
-)
+"""
+AcademicOS
+
+Sidebar (Explorer)
+"""
 
 from PySide6.QtCore import QModelIndex
+from PySide6.QtWidgets import (
+    QFileSystemModel,
+    QTreeView,
+    QVBoxLayout,
+    QWidget,
+)
 
 from core.session import Session
 
+
 class Sidebar(QWidget):
+    """
+    Workspace Explorer.
+    Displays the currently opened AcademicOS workspace.
+    """
 
     def __init__(self, parent=None):
         super().__init__(parent)
 
-        self.layout = QVBoxLayout(self)
+        layout = QVBoxLayout(self)
+        layout.setContentsMargins(0, 0, 0, 0)
 
-        # ---------------- FILE SYSTEM MODEL ----------------
+        # -------------------------------------------------
+        # File System Model
+        # -------------------------------------------------
+
         self.model = QFileSystemModel()
-        self.model.setRootPath("C:/")
+        self.model.setRootPath("")
 
-        # ---------------- TREE VIEW ----------------
+        # -------------------------------------------------
+        # Tree View
+        # -------------------------------------------------
+
         self.tree = QTreeView()
-        self.tree.setModel(self.model)
 
+        self.tree.setModel(self.model)
         self.tree.setHeaderHidden(True)
         self.tree.setAnimated(True)
-        self.tree.setIndentation(15)
+        self.tree.setIndentation(18)
 
-        self.tree.doubleClicked.connect(self.on_double_click)
+        self.tree.doubleClicked.connect(
+            self.on_double_click
+        )
 
-        self.layout.addWidget(self.tree)
+        layout.addWidget(self.tree)
+
+    # -------------------------------------------------
 
     def update_workspace(self):
         """
-        Call this when workspace changes.
+        Refresh the explorer to display
+        the currently opened workspace.
         """
 
-        if not Session.workspace_path:
+        if not Session.is_workspace_open():
             return
 
-        root_path = Session.workspace_path
+        root = Session.workspace_path
 
-        self.tree.setRootIndex(
-            self.model.setRootPath(root_path)
-        )
+        index = self.model.setRootPath(root)
+        self.tree.setRootIndex(index)
+
+    # -------------------------------------------------
 
     def on_double_click(self, index: QModelIndex):
+        """
+        Placeholder.
+
+        Sprint B:
+            Open notes
+            Open PDFs
+            Open images
+        """
 
         path = self.model.filePath(index)
 
-        # For now: just print (later we open notes/files)
-        print("Clicked:", path)
+        print(f"Open file: {path}")

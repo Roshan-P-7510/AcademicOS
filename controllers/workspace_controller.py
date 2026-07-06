@@ -7,6 +7,9 @@ from services.workspace_service import WorkspaceService
 
 
 class WorkspaceController:
+    """
+    Handles workspace-related UI actions.
+    """
 
     def __init__(self, parent):
         self.parent = parent
@@ -31,8 +34,8 @@ class WorkspaceController:
 
             QMessageBox.information(
                 self.parent,
-                "Success",
-                f"Workspace created!\n\n{workspace}"
+                "Workspace Created",
+                f"Workspace created successfully.\n\n{workspace}"
             )
 
         except Exception as e:
@@ -44,7 +47,7 @@ class WorkspaceController:
             )
 
     # --------------------------------------------------
-    # OPEN WORKSPACE
+    # OPEN FROM DIALOG
     # --------------------------------------------------
 
     def open_workspace(self):
@@ -57,35 +60,26 @@ class WorkspaceController:
         if not folder:
             return
 
-        self._open(folder)
+        self.open_workspace_from_path(folder)
 
     # --------------------------------------------------
-    # INTERNAL
+    # OPEN FROM PATH
     # --------------------------------------------------
 
-    def _open(self, folder: str):
+    def open_workspace_from_path(self, folder: str):
 
         try:
 
             path, data = WorkspaceService.open_workspace(folder)
 
+            # Update session
             Session.open_workspace(path, data)
 
+            # Save to recent workspaces
             RecentService.add(path)
 
-            self.parent.setWindowTitle(
-                f"AcademicOS — {Session.workspace_name}"
-            )
-
-            self.parent.statusBar().showMessage(
-                "Workspace opened successfully."
-            )
-
-            QMessageBox.information(
-                self.parent,
-                "Success",
-                "Workspace opened successfully."
-            )
+            # Refresh entire UI
+            self.parent.refresh_workspace()
 
         except (FileNotFoundError, ValueError) as e:
 

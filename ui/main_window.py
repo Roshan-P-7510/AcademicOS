@@ -4,13 +4,14 @@ from PySide6.QtWidgets import (
     QMainWindow,
 )
 
-from services.recent_service import RecentService
+from core.session import Session
 from controllers.workspace_controller import WorkspaceController
+from services.recent_service import RecentService
+from ui.inspector import Inspector
 from ui.menu_bar import MainMenuBar
+from ui.sidebar import Sidebar
 from ui.tool_bar import MainToolBar
 from ui.workspace import Workspace
-from ui.sidebar import Sidebar
-from ui.inspector import Inspector
 
 
 class MainWindow(QMainWindow):
@@ -25,60 +26,76 @@ class MainWindow(QMainWindow):
 
         self.build_ui()
 
+    # ==========================================================
+    # BUILD UI
+    # ==========================================================
+
     def build_ui(self):
 
         # ---------- Menu ----------
+
         self.menu = MainMenuBar(self)
         self.setMenuBar(self.menu)
 
         # ---------- Toolbar ----------
+
         self.toolbar = MainToolBar(self)
         self.addToolBar(self.toolbar)
 
         # ---------- Workspace ----------
+
         self.workspace = Workspace()
         self.setCentralWidget(self.workspace)
 
         # ---------- Sidebar ----------
+
         self.sidebar = Sidebar()
 
-        left_dock = QDockWidget("Navigation")
+        left_dock = QDockWidget("Explorer")
         left_dock.setWidget(self.sidebar)
         left_dock.setAllowedAreas(Qt.LeftDockWidgetArea)
 
-        self.addDockWidget(Qt.LeftDockWidgetArea, left_dock)
+        self.addDockWidget(
+            Qt.LeftDockWidgetArea,
+            left_dock
+        )
 
         # ---------- Inspector ----------
+
         self.inspector = Inspector()
 
         right_dock = QDockWidget("Inspector")
         right_dock.setWidget(self.inspector)
         right_dock.setAllowedAreas(Qt.RightDockWidgetArea)
 
-        self.addDockWidget(Qt.RightDockWidgetArea, right_dock)
+        self.addDockWidget(
+            Qt.RightDockWidgetArea,
+            right_dock
+        )
 
         # ---------- Status ----------
+
         self.statusBar().showMessage("Ready")
 
         # ---------- Signals ----------
+
         self.menu.exit_action.triggered.connect(self.close)
 
         self.menu.open_workspace_action.triggered.connect(
             self.workspace_controller.open_workspace
         )
 
-        dashboard = self.workspace.dashboard
-
-        dashboard.create.clicked.connect(
+        self.workspace.dashboard.create.clicked.connect(
             self.workspace_controller.create_workspace
         )
 
-        # ---------- Recent Workspaces ----------
+        # ---------- Recent ----------
+
         self.load_recent_menu()
 
-    # =========================================================
-    # RECENT WORKSPACE METHODS
-    # =========================================================
+    # ==========================================================
+    # RECENT WORKSPACES
+    # ==========================================================
 
     def load_recent_menu(self):
 
@@ -92,4 +109,39 @@ class MainWindow(QMainWindow):
     def _open_recent_workspace(self, path: str):
 
         self.workspace_controller.open_workspace_from_path(path)
+
+    # ==========================================================
+    # UI REFRESH
+    # ==========================================================
+
+    def refresh_workspace(self):
+        """
+        Refresh the entire UI after a workspace is opened.
+        """
+
+        if not Session.is_workspace_open():
+            return
+
+        # Window title
+
+        self.setWindowTitle(
+            f"AcademicOS — {Session.workspace_name}"
+        )
+
+        # Sidebar
+
         self.sidebar.update_workspace()
+
+        # Central workspace
+
+        self.workspace.show_editor()
+
+        # Status bar
+
+        self.statusBar().showMessage(
+            f"Workspace: {Session.workspace_name}"
+        )
+
+        # Refresh recent menu
+
+        self.load_recent_menu()
