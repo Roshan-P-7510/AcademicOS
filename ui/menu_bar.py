@@ -3,7 +3,6 @@ from PySide6.QtWidgets import QMenuBar
 
 
 class MainMenuBar(QMenuBar):
-    """Application Menu Bar."""
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -11,8 +10,6 @@ class MainMenuBar(QMenuBar):
         self._create_menus()
 
     def _create_menus(self):
-
-        # ---------------- FILE ----------------
 
         file_menu = self.addMenu("&File")
 
@@ -22,6 +19,8 @@ class MainMenuBar(QMenuBar):
         self.open_workspace_action = QAction("Open Workspace", self)
         self.open_workspace_action.setShortcut(QKeySequence.Open)
 
+        self.recent_menu = file_menu.addMenu("Open Recent")
+
         self.save_action = QAction("Save", self)
         self.save_action.setShortcut(QKeySequence.Save)
 
@@ -30,12 +29,11 @@ class MainMenuBar(QMenuBar):
 
         file_menu.addAction(self.new_workspace_action)
         file_menu.addAction(self.open_workspace_action)
+        file_menu.addMenu(self.recent_menu)
         file_menu.addSeparator()
         file_menu.addAction(self.save_action)
         file_menu.addSeparator()
         file_menu.addAction(self.exit_action)
-
-        # ---------------- EDIT ----------------
 
         edit_menu = self.addMenu("&Edit")
 
@@ -48,22 +46,35 @@ class MainMenuBar(QMenuBar):
         edit_menu.addAction(self.undo_action)
         edit_menu.addAction(self.redo_action)
 
-        # ---------------- VIEW ----------------
-
         self.view_menu = self.addMenu("&View")
-
-        # ---------------- WORKSPACE ----------------
-
         self.workspace_menu = self.addMenu("&Workspace")
-
-        # ---------------- TOOLS ----------------
-
         self.tools_menu = self.addMenu("&Tools")
-
-        # ---------------- HELP ----------------
 
         help_menu = self.addMenu("&Help")
 
         self.about_action = QAction("About AcademicOS", self)
-
         help_menu.addAction(self.about_action)
+
+    # 🔥 NEW: helper for Feature Pack 4
+    def set_recent_items(self, items, callback):
+        """
+        items: list of workspace paths
+        callback: function(path) -> open workspace
+        """
+
+        self.recent_menu.clear()
+
+        if not items:
+            empty = QAction("No recent workspaces", self)
+            empty.setEnabled(False)
+            self.recent_menu.addAction(empty)
+            return
+
+        for path in items:
+            action = QAction(path, self)
+
+            action.triggered.connect(
+                lambda checked, p=path: callback(p)
+            )
+
+            self.recent_menu.addAction(action)

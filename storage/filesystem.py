@@ -1,72 +1,79 @@
 from pathlib import Path
 import json
-import sqlite3
+from typing import Dict, Any
 
 
 class FileSystem:
+    """
+    Handles all filesystem operations for AcademicOS.
+    """
 
-    DEFAULT_FOLDERS = [
-        "Subjects",
-        "Notes",
-        "PDFs",
-        "Images",
-        "Exports",
-        "Backups",
-        "Trash",
-    ]
+    APP_FOLDER = ".academicos"
+    CONFIG_FILE = "workspace.json"
 
-    DATABASES = [
-        "workspace.db",
-        "search.db",
-    ]
+    @staticmethod
+    def workspace_exists(path: str) -> bool:
+        return Path(path).exists()
 
-    @classmethod
-    def create_workspace(
-        cls,
-        parent_folder: str,
-        workspace_name: str,
-    ) -> Path:
+    @staticmethod
+    def create_directory(path: str):
+        Path(path).mkdir(parents=True, exist_ok=True)
 
-        workspace_path = Path(parent_folder) / workspace_name
+    @staticmethod
+    def create_workspace_structure(path: str):
+        root = Path(path)
 
-        if workspace_path.exists():
-            raise FileExistsError(
-                f'"{workspace_name}" already exists.'
-            )
+        folders = [
+            "Notes",
+            "Assignments",
+            "Resources",
+            "Exams",
+            "Projects",
+            ".academicos"
+        ]
 
-        # Create root folder
-        workspace_path.mkdir(parents=True)
+        for folder in folders:
+            (root / folder).mkdir(parents=True, exist_ok=True)
 
-        # Create subfolders
-        for folder in cls.DEFAULT_FOLDERS:
-            (workspace_path / folder).mkdir()
-
-        # Create databases
-        for db in cls.DATABASES:
-            sqlite3.connect(
-                workspace_path / db
-            ).close()
-
-        # Create workspace.json
-        metadata = {
-            "name": workspace_name,
-            "version": "0.1",
-            "subjects": 0,
-            "notes": 0,
-            "pdfs": 0,
-            "images": 0,
+        config = {
+            "name": root.name,
+            "version": "1.0",
+            "type": "AcademicOS Workspace"
         }
 
-        with open(
-            workspace_path / "workspace.json",
-            "w",
-            encoding="utf-8",
-        ) as file:
+        config_path = root / FileSystem.APP_FOLDER / FileSystem.CONFIG_FILE
 
-            json.dump(
-                metadata,
-                file,
-                indent=4,
-            )
+        with open(config_path, "w", encoding="utf-8") as file:
+            json.dump(config, file, indent=4)
 
-        return workspace_path
+    @staticmethod
+    def is_workspace(path: str) -> bool:
+        config = (
+            Path(path)
+            / FileSystem.APP_FOLDER
+            / FileSystem.CONFIG_FILE
+        )
+
+        return config.exists()
+
+    @staticmethod
+    def load_workspace(path: str) -> Dict[str, Any]:
+        config = (
+            Path(path)
+            / FileSystem.APP_FOLDER
+            / FileSystem.CONFIG_FILE
+        )
+
+        with open(config, "r", encoding="utf-8") as file:
+            return json.load(file)
+
+    @staticmethod
+    def save_workspace(path: str, data: Dict[str, Any]):
+        config = (
+            Path(path)
+            / FileSystem.APP_FOLDER
+            / FileSystem.CONFIG_FILE
+        )
+
+        with open(config, "w", encoding="utf-8") as file:
+            json.dump(data, file, indent=4)
