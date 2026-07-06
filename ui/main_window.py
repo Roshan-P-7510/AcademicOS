@@ -5,6 +5,7 @@ from PySide6.QtWidgets import (
 )
 
 from core.session import Session
+from controllers.file_controller import FileController
 from controllers.workspace_controller import WorkspaceController
 from services.recent_service import RecentService
 from ui.inspector import Inspector
@@ -23,31 +24,28 @@ class MainWindow(QMainWindow):
         self.resize(1600, 900)
 
         self.workspace_controller = WorkspaceController(self)
+        self.file_controller = FileController(self)
 
         self.build_ui()
 
-    # ==========================================================
-    # BUILD UI
-    # ==========================================================
-
     def build_ui(self):
 
-        # ---------- Menu ----------
+        # ---------------- Menu ----------------
 
         self.menu = MainMenuBar(self)
         self.setMenuBar(self.menu)
 
-        # ---------- Toolbar ----------
+        # ---------------- Toolbar ----------------
 
         self.toolbar = MainToolBar(self)
         self.addToolBar(self.toolbar)
 
-        # ---------- Workspace ----------
+        # ---------------- Workspace ----------------
 
         self.workspace = Workspace()
         self.setCentralWidget(self.workspace)
 
-        # ---------- Sidebar ----------
+        # ---------------- Sidebar ----------------
 
         self.sidebar = Sidebar()
 
@@ -60,7 +58,7 @@ class MainWindow(QMainWindow):
             left_dock
         )
 
-        # ---------- Inspector ----------
+        # ---------------- Inspector ----------------
 
         self.inspector = Inspector()
 
@@ -73,29 +71,39 @@ class MainWindow(QMainWindow):
             right_dock
         )
 
-        # ---------- Status ----------
+        # ---------------- Status ----------------
 
         self.statusBar().showMessage("Ready")
 
-        # ---------- Signals ----------
+        # ---------------- Menu Signals ----------------
 
-        self.menu.exit_action.triggered.connect(self.close)
+        self.menu.exit_action.triggered.connect(
+            self.close
+        )
 
         self.menu.open_workspace_action.triggered.connect(
             self.workspace_controller.open_workspace
         )
 
+        # ---------------- Dashboard ----------------
+
         self.workspace.dashboard.create.clicked.connect(
             self.workspace_controller.create_workspace
         )
 
-        # ---------- Recent ----------
+        # ---------------- Explorer ----------------
+
+        self.sidebar.file_open_requested.connect(
+            self.file_controller.open_file
+        )
+
+        # ---------------- Recent ----------------
 
         self.load_recent_menu()
 
-    # ==========================================================
+    # ==================================================
     # RECENT WORKSPACES
-    # ==========================================================
+    # ==================================================
 
     def load_recent_menu(self):
 
@@ -110,38 +118,25 @@ class MainWindow(QMainWindow):
 
         self.workspace_controller.open_workspace_from_path(path)
 
-    # ==========================================================
+    # ==================================================
     # UI REFRESH
-    # ==========================================================
+    # ==================================================
 
     def refresh_workspace(self):
-        """
-        Refresh the entire UI after a workspace is opened.
-        """
 
         if not Session.is_workspace_open():
             return
-
-        # Window title
 
         self.setWindowTitle(
             f"AcademicOS — {Session.workspace_name}"
         )
 
-        # Sidebar
-
         self.sidebar.update_workspace()
 
-        # Central workspace
-
         self.workspace.show_editor()
-
-        # Status bar
 
         self.statusBar().showMessage(
             f"Workspace: {Session.workspace_name}"
         )
-
-        # Refresh recent menu
 
         self.load_recent_menu()

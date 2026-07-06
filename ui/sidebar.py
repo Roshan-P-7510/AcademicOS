@@ -1,10 +1,10 @@
 """
 AcademicOS
 
-Sidebar (Explorer)
+Workspace Explorer
 """
 
-from PySide6.QtCore import QModelIndex
+from PySide6.QtCore import QModelIndex, Signal
 from PySide6.QtWidgets import (
     QFileSystemModel,
     QTreeView,
@@ -17,9 +17,11 @@ from core.session import Session
 
 class Sidebar(QWidget):
     """
-    Workspace Explorer.
-    Displays the currently opened AcademicOS workspace.
+    Displays the currently opened workspace.
     """
+
+    # Emitted when the user wants to open a file.
+    file_open_requested = Signal(str)
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -27,20 +29,16 @@ class Sidebar(QWidget):
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
 
-        # -------------------------------------------------
-        # File System Model
-        # -------------------------------------------------
+        # ---------------- FILE SYSTEM MODEL ----------------
 
         self.model = QFileSystemModel()
         self.model.setRootPath("")
 
-        # -------------------------------------------------
-        # Tree View
-        # -------------------------------------------------
+        # ---------------- TREE VIEW ----------------
 
         self.tree = QTreeView()
-
         self.tree.setModel(self.model)
+
         self.tree.setHeaderHidden(True)
         self.tree.setAnimated(True)
         self.tree.setIndentation(18)
@@ -55,8 +53,7 @@ class Sidebar(QWidget):
 
     def update_workspace(self):
         """
-        Refresh the explorer to display
-        the currently opened workspace.
+        Refresh explorer.
         """
 
         if not Session.is_workspace_open():
@@ -71,14 +68,13 @@ class Sidebar(QWidget):
 
     def on_double_click(self, index: QModelIndex):
         """
-        Placeholder.
-
-        Sprint B:
-            Open notes
-            Open PDFs
-            Open images
+        Emit a signal only for files.
         """
 
         path = self.model.filePath(index)
 
-        print(f"Open file: {path}")
+        # Ignore folders
+        if self.model.isDir(index):
+            return
+
+        self.file_open_requested.emit(path)

@@ -1,50 +1,86 @@
 """
 AcademicOS
-Sprint A.2.1
+Sprint B.1
 
-Editor page shown after a workspace is opened.
+Editor page for viewing text files.
 """
 
 from PySide6.QtCore import Qt
+from PySide6.QtGui import QTextCursor
 from PySide6.QtWidgets import (
     QLabel,
-    QPushButton,
+    QPlainTextEdit,
     QVBoxLayout,
     QWidget,
 )
 
 
 class EditorPage(QWidget):
+    """
+    Central editor page.
+
+    Displays a welcome screen until a file is opened.
+    """
 
     def __init__(self):
         super().__init__()
 
         layout = QVBoxLayout(self)
-        layout.setAlignment(Qt.AlignCenter)
-        layout.setSpacing(20)
 
-        title = QLabel("AcademicOS")
-        title.setAlignment(Qt.AlignCenter)
-        title.setStyleSheet("""
-            font-size: 28px;
-            font-weight: bold;
+        # -------------------------------------------------
+        # File Name
+        # -------------------------------------------------
+
+        self.title = QLabel("AcademicOS")
+        self.title.setAlignment(Qt.AlignCenter)
+        self.title.setStyleSheet("""
+            font-size:24px;
+            font-weight:bold;
         """)
 
-        subtitle = QLabel(
+        # -------------------------------------------------
+        # Text Viewer
+        # -------------------------------------------------
+
+        self.editor = QPlainTextEdit()
+
+        self.editor.setReadOnly(True)
+
+        self.editor.setPlainText(
             "No file is currently open.\n\n"
-            "Open a file from the Explorer\n"
-            "or create a new note."
+            "Open a file from the Explorer."
         )
-        subtitle.setAlignment(Qt.AlignCenter)
-        subtitle.setStyleSheet("""
-            font-size: 14px;
-            color: gray;
-        """)
 
-        self.new_note = QPushButton("New Note")
-        self.new_note.setFixedWidth(180)
-        self.new_note.setEnabled(False)
+        layout.addWidget(self.title)
+        layout.addWidget(self.editor)
 
-        layout.addWidget(title)
-        layout.addWidget(subtitle)
-        layout.addWidget(self.new_note, alignment=Qt.AlignCenter)
+    # -------------------------------------------------
+
+    def open_text(
+        self,
+        filename: str,
+        content: str
+    ):
+        """
+        Display a text file.
+        """
+
+        self.title.setText(filename)
+
+        self.editor.setPlainText(content)
+
+        self.editor.moveCursor(QTextCursor.Start)
+
+    # -------------------------------------------------
+
+    def clear(self):
+        """
+        Restore the welcome page.
+        """
+
+        self.title.setText("AcademicOS")
+
+        self.editor.setPlainText(
+            "No file is currently open.\n\n"
+            "Open a file from the Explorer."
+        )

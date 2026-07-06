@@ -1,8 +1,7 @@
 """
 AcademicOS
-Sprint A.2.1
 
-Central workspace widget.
+Central Workspace
 """
 
 from PySide6.QtWidgets import QStackedWidget
@@ -31,3 +30,22 @@ class Workspace(QStackedWidget):
 
     def show_editor(self):
         self.setCurrentWidget(self.editor)
+
+    # -------------------------------------------------
+    # FILE API
+    # -------------------------------------------------
+
+    def open_text(self, filename: str, content: str):
+        """
+        Display a text file inside the editor.
+        """
+
+        self.show_editor()
+        self.editor.open_text(filename, content)
+
+    def clear(self):
+        """
+        Restore the welcome editor.
+        """
+
+        self.editor.clear()
